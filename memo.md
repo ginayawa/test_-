@@ -8,6 +8,8 @@ cd frontend
 npm install next@latest react@latest react-dom@latest -D tailwindcss
 npm install crypto-js
 npm install @types/crypto-js --save-dev
+npm install axios
+
 
 ```
 

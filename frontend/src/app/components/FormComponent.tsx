@@ -218,7 +218,8 @@ export default function FormComponent() {
         handleCheckboxChange={handleCheckboxChange}
       />
       
-      <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg">送信</button>
+      <button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 px-6 rounded-full shadow-lg active:translate-y-1 active:shadow-inner transition-all duration-300">送信</button>
+
     </form>
   );
 }
