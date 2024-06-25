@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+import PersonalInfoComponent from './00_PersonalInfoComponent'
 import SymptomsComponent from './01_SymptomComponent';
 import SideEffectsComponent from './02_SideEffectsComponent';
 import AllergiesComponent from './03_AllergiesComponent';
@@ -9,6 +11,13 @@ import PregnancyComponent from './07_PregnancyComponent';
 import LifestyleComponent from './08_LifestyleComponent';
 
 interface FormData {
+  name: string;
+  furigana: string;
+  address: string;
+  phone: string;
+  gender: string;
+  birth_date: string;  // 和暦
+  weight: string;
   symptoms: string;
   side_effects_status: string;
   side_effects: { medicine: string; symptom: string }[];
@@ -29,6 +38,13 @@ interface FormData {
 export default function FormComponent() {
 
   const [formData, setFormData] = useState<FormData>({
+    name: '',
+    furigana: '',
+    address: '',
+    phone: '',
+    gender: '',
+    birth_date: '',
+    weight: '',
     symptoms: '',
     side_effects_status: 'いいえ',
     side_effects: [{ medicine: '', symptom: '' }],
@@ -46,6 +62,54 @@ export default function FormComponent() {
     drinking: false
   });
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value })
+  };
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setFormData({ ...formData, [name]: checked });
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+  
+    try {
+      const parsedWeight = formData.weight === '' ? null : parseFloat(formData.weight);
+  
+      const parsedFormData = {
+        ...formData,
+        weight: parsedWeight,  // weightをnullまたは数値に設定
+      };
+  
+      const response = await fetch('http://localhost:8000/form/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(parsedFormData)
+      });
+      if (response.ok) {
+        alert('Data saved successfully');
+      } else {
+        const errorData = await response.json();
+        console.error("Error response:", response, errorData);
+        alert('Error saving data');
+      }
+    } catch (error) {
+      console.error("Error during fetch:", error);
+      alert('Error saving data');
+    }
+  };
+  
+
+  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  
   const handleSideEffectChange = (index: number, field: string, value: string) => {
     const newSideEffects = [...formData.side_effects];
     newSideEffects[index] = { ...newSideEffects[index], [field]: value };
@@ -111,48 +175,31 @@ export default function FormComponent() {
     });
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    try {
-      console.log("Sending data:", formData);  // ここで送信データをログ出力
-
-      const response = await fetch('http://localhost:8000/form/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)  // ここでそのままformDataを送信
-      });
-      if (response.ok) {
-        alert('Data saved successfully');
-      } else {
-        const errorData = await response.json();
-        console.error("Error response:", response, errorData);
-        alert('Error saving data');
-      }
-    } catch (error) {
-      console.error("Error during fetch:", error);
-      alert('Error saving data');
-    }
-  };
-
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = event.target;
-    setFormData({ ...formData, [name]: checked });
-  };
-
-  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
   const handlePregnancyStatusChange = (value: string) => {
     setFormData({ ...formData, pregnancy_status: value });
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      {/* 患者情報 */}
+      <PersonalInfoComponent
+        name={formData.name}
+        furigana={formData.furigana}
+        address={formData.address}
+        phone={formData.phone}
+        gender={formData.gender}
+        birth_date={formData.birth_date}
+        weight={formData.weight}
+        setName={(value: string) => setFormData({ ...formData, name: value })}
+        setFurigana={(value: string) => setFormData({ ...formData, furigana: value })}
+        setAddress={(value: string) => setFormData({ ...formData, address: value })}
+        setPhone={(value: string) => setFormData({ ...formData, phone: value })}
+        setGender={(value: string) => setFormData({ ...formData, gender: value })}
+        setBirthDate={(value: string) => setFormData({ ...formData, birth_date: value })}
+        setWeight={(value: string) => setFormData({ ...formData, weight: value })}
+      />
+
+      
       {/* 原疾患 */}
       <SymptomsComponent
         symptoms={formData.symptoms}
@@ -177,6 +224,7 @@ export default function FormComponent() {
         handleRadioChange={handleRadioChange}
       />
 
+      {/*```tsx
       {/* 既往歴 */}
       <PastIllnessesComponent
         pastIllnessesStatus={formData.past_illnesses_status}

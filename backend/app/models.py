@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -11,6 +11,13 @@ class User(Base):
 class FormData(Base):
     __tablename__ = "form_data"
     id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    furigana = Column(String)
+    address = Column(String)
+    phone = Column(String)
+    gender = Column(String)
+    birth_date = Column(String)  # 和暦
+    weight = Column(Float)
     symptoms = Column(String)
     side_effects_status = Column(String)
     allergies_status = Column(String)

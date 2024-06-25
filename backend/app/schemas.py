@@ -79,6 +79,13 @@ class DifficultMedicine(DifficultMedicineBase):
         from_attributes = True
 
 class FormDataBase(BaseModel):
+    name: str
+    furigana: str
+    address: str
+    phone: str
+    gender: str
+    birth_date: str  # 和暦
+    weight: Optional[float] = None  # weightフィールドをOptionalに変更
     symptoms: str
     side_effects_status: str
     allergies_status: str

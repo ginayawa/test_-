@@ -61,6 +61,13 @@ def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
 @app.post("/form/", response_model=schemas.FormData)
 async def create_form_data(form_data: schemas.FormDataCreate, db: Session = Depends(database.get_db)):
     db_form_data = FormData(
+        name=encrypt_data(form_data.name),
+        furigana=encrypt_data(form_data.furigana),
+        address=encrypt_data(form_data.address),
+        phone=encrypt_data(form_data.phone),
+        gender=encrypt_data(form_data.gender),
+        birth_date=encrypt_data(form_data.birth_date),
+        weight=form_data.weight,
         symptoms= encrypt_data(form_data.symptoms) ,  # 暗号化されたデータを保存
         side_effects_status=encrypt_data(form_data.side_effects_status),
         allergies_status=encrypt_data(form_data.allergies_status),
@@ -72,17 +79,6 @@ async def create_form_data(form_data: schemas.FormDataCreate, db: Session = Depe
         smoking=form_data.smoking,  # ブール値はそのまま保存
         drinking=form_data.drinking  # ブール値はそのまま保存
     )
-    
-    for se in form_data.side_effects:
-        db_form_data.side_effects.append(SideEffect(medicine=encrypt_data(se.medicine), symptom=encrypt_data(se.symptom)))
-    for a in form_data.allergies:
-        db_form_data.allergies.append(Allergy(type=encrypt_data(a.type)))
-    for pi in form_data.past_illnesses:
-        db_form_data.past_illnesses.append(PastIllness(year=encrypt_data(pi.year), disease=encrypt_data(pi.disease)))
-    for cm in form_data.combined_medications:
-        db_form_data.combined_medications.append(CombinedMedication(medicine_name=encrypt_data(cm.medicine_name), hospital_name=encrypt_data(cm.hospital_name)))
-    for dm in form_data.difficult_medicines:
-        db_form_data.difficult_medicines.append(DifficultMedicine(type=encrypt_data(dm.type), other=encrypt_data(dm.other)))
 
     db.add(db_form_data)
     db.commit()
@@ -97,6 +93,13 @@ async def export_data(db: Session = Depends(database.get_db)):
         for d in data:
             decrypted_data.append({
                 "id": d.id,
+                "name": decrypt_data(d.name),
+                "furigana": decrypt_data(d.furigana),
+                "address": decrypt_data(d.address),
+                "phone": decrypt_data(d.phone),
+                "gender": decrypt_data(d.gender),
+                "birth_date": decrypt_data(d.birth_date),
+                "weight": d.weight,
                 "symptoms": decrypt_data(d.symptoms),
                 "side_effects_status": decrypt_data(d.side_effects_status),
                 "allergies_status": decrypt_data(d.allergies_status),
@@ -109,7 +112,6 @@ async def export_data(db: Session = Depends(database.get_db)):
                 "drinking": d.drinking
             })
     except Exception as e:
-        # エラーメッセージをログに記録
         print(f"Error processing data: {e}")
         raise HTTPException(status_code=500, detail=f"Error processing data: {e}")
 
@@ -122,7 +124,6 @@ def delete_form_data(form_ids: List[int], db: Session = Depends(database.get_db)
     for form_id in form_ids:
         form_data = db.query(FormData).filter(FormData.id == form_id).first()
         if form_data:
-            # 先に関連するデータを削除
             db.query(SideEffect).filter(SideEffect.form_data_id == form_data.id).delete()
             db.query(Allergy).filter(Allergy.form_data_id == form_data.id).delete()
             db.query(PastIllness).filter(PastIllness.form_data_id == form_data.id).delete()

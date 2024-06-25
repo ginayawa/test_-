@@ -7,6 +7,13 @@ import axios from "axios";
 
 interface FormData {
   id: number;
+  name: string;
+  furigana: string;
+  address: string;
+  phone: string;
+  gender: string;
+  birth_date: string;
+  weight: number;
   symptoms: string;
   side_effects_status: string;
   allergies_status: string;
@@ -78,6 +85,13 @@ const Admin: React.FC = () => {
     if (!data) return;
     const csvData = data.map(row => ({
       id: row.id,
+      name: row.name,
+      furigana: row.furigana,
+      address: row.address,
+      phone: row.phone,
+      gender: row.gender,
+      birth_date: row.birth_date,
+      weight: row.weight,
       symptoms: row.symptoms,
       side_effects_status: row.side_effects_status,
       allergies_status: row.allergies_status,
@@ -143,6 +157,13 @@ const Admin: React.FC = () => {
                     />
                   </th>
                   <th className="py-3 px-2 border-b-2 border-gray-200 font-semibold text-gray-700 sticky top-0">ID</th>
+                  <th className="py-3 px-2 border-b-2 border-gray-200 font-semibold text-gray-700 sticky top-0">Name</th>
+                  <th className="py-3 px-2 border-b-2 border-gray-200 font-semibold text-gray-700 sticky top-0">Furigana</th>
+                  <th className="py-3 px-2 border-b-2 border-gray-200 font-semibold text-gray-700 sticky top-0">Address</th>
+                  <th className="py-3 px-2 border-b-2 border-gray-200 font-semibold text-gray-700 sticky top-0">Phone</th>
+                  <th className="py-3 px-2 border-b-2 border-gray-200 font-semibold text-gray-700 sticky top-0">Gender</th>
+                  <th className="py-3 px-2 border-b-2 border-gray-200 font-semibold text-gray-700 sticky top-0">Birth Date</th>
+                  <th className="py-3 px-2 border-b-2 border-gray-200 font-semibold text-gray-700 sticky top-0">Weight</th>
                   <th className="py-3 px-2 border-b-2 border-gray-200 font-semibold text-gray-700 sticky top-0">Symptoms</th>
                   <th className="py-3 px-2 border-b-2 border-gray-200 font-semibold text-gray-700 sticky top-0">Side Effects Status</th>
                   <th className="py-3 px-2 border-b-2 border-gray-200 font-semibold text-gray-700 sticky top-0">Allergies Status</th>
@@ -166,6 +187,13 @@ const Admin: React.FC = () => {
                       />
                     </td>
                     <td className="py-3 px-2 border-b border-gray-200 text-gray-800">{row.id}</td>
+                    <td className="py-3 px-2 border-b border-gray-200 text-gray-800">{row.name}</td>
+                    <td className="py-3 px-2 border-b border-gray-200 text-gray-800">{row.furigana}</td>
+                    <td className="py-3 px-2 border-b border-gray-200 text-gray-800">{row.address}</td>
+                    <td className="py-3 px-2 border-b border-gray-200 text-gray-800">{row.phone}</td>
+                    <td className="py-3 px-2 border-b border-gray-200 text-gray-800">{row.gender}</td>
+                    <td className="py-3 px-2 border-b border-gray-200 text-gray-800">{row.birth_date}</td>
+                    <td className="py-3 px-2 border-b border-gray-200 text-gray-800">{row.weight}</td>
                     <td className="py-3 px-2 border-b border-gray-200 text-gray-800">{row.symptoms}</td>
                     <td className="py-3 px-2 border-b border-gray-200 text-gray-800">{row.side_effects_status}</td>
                     <td className="py-3 px-2 border-b border-gray-200 text-gray-800">{row.allergies_status}</td>
